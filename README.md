@@ -6,6 +6,8 @@ Illustrate how to work with azure vault
 - certificates
 
 
+
+
 Resource 
 
 https://github.com/stephenhaunts/AzureKeyVault/blob/master/SimpleEncryptDecrypt/KeyVault.cs
