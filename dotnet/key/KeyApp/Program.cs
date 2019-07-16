@@ -97,12 +97,3 @@ namespace KeyApp
     }
 }
 
-
-
-// {
-//   "appId": "5314007c-a783-4b92-b713-e928214947e9",
-//   "displayName": "wickedapp",
-//   "name": "http://wickedapp",
-//   "password": "0f76365a-7abc-40c5-b8f1-05e6964dae6c",
-//   "tenant": "c7edfba3-a241-4b80-a92f-a311dc6cd2df"
-// }
