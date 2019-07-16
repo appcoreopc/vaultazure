@@ -73,11 +73,16 @@ namespace KeyApp
             System.Console.WriteLine($"Setting up client");
             var client = new KeyVaultClient(callback);  
 
-            var result = client.GetSecretAsync("https://wickedvault.vault.azure.net", "test");   
+client.HttpClient.BaseAddress = new Uri("https://wickedvault.vault.azure.net");
+        
+            var result = client.GetSecretAsync("https://wickedvault.vault.azure.net", "test");  
+            var r = client.GetKeyAsync("https://wickedvault.vault.azure.net", "masterKey"); 
 
-            Console.WriteLine(result.Id);
+            Console.WriteLine($"  Val {result.Id}");
             Console.WriteLine(client.ApiVersion);
 
+
+            
             var decryptionResult = await client.DecryptAsync("masterKey",  JsonWebKeyEncryptionAlgorithm.RSAOAEP, encryptedBytes);
 
              var decryptedText = Encoding.Unicode.GetString(decryptionResult.Result);
@@ -148,6 +153,5 @@ namespace KeyApp
             var key = kv.GetKeyAsync(keyIdentifier);
             return key.Result.Key.ToString();
         }
-
     }
 }
