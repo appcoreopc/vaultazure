@@ -6,7 +6,6 @@ using Azure.Identity;
 using Azure.Security.KeyVault.Keys;
 using Microsoft.Azure.KeyVault;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using Microsoft.Azure;
 using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Azure.KeyVault.WebKey;
 using System.Net.Http;
@@ -22,9 +21,9 @@ namespace KeyApp
         {
             Console.WriteLine("Hello World!");
 
-            var client = new KeyClient(vaultUri: new Uri("https://wickedvault.vault.azure.net/"), credential: new DefaultAzureCredential());
-        
-            var key = client.GetKey("masterKey"); 
+            var client = new KeyClient(vaultUri: new Uri("https://sbkvpmtengine.vault.azure.net"), credential: new DefaultAzureCredential());
+
+            var key = client.GetKey("masterKey");
             System.Console.WriteLine(key.Value.Name);
             System.Console.WriteLine(key.Value.KeyMaterial.KeyType);
 
@@ -34,62 +33,60 @@ namespace KeyApp
             Decrypt(encodedText).GetAwaiter().GetResult();
         }
 
-        private static async Task<string> Decrypt(string encryptedText) 
-        {       
+        private static async Task<string> Decrypt(string encryptedText)
+        {
             var encryptedBytes = Convert.FromBase64String(encryptedText);
             System.Console.WriteLine("Decypting text");
             System.Console.WriteLine(encryptedBytes);
-    
-    	// var clientCredential = new ClientCredential("5314007c-a783-4b92-b713-e928214947e9", "0f76365a-7abc-40c5-b8f1-05e6964dae6c");
-        // var kvc = new KeyVaultCredential(GetAccessTokenAsync);
-    
+
+            // var clientCredential = new ClientCredential("5314007c-a783-4b92-b713-e928214947e9", "0f76365a-7abc-40c5-b8f1-05e6964dae6c");
+            // var kvc = new KeyVaultCredential(GetAccessTokenAsync);
+
             //GetKeyContent("https://wickedvault.vault.azure.net/");
 
             //var kv = GetKeyVaultClient(GetKeyVaultCallback());
-        
+
 
             // var azureServiceTokenProvider = new AzureServiceTokenProvider();
 
             ///var kv = new KeyVaultClient(kvc, GetHttpClient());
             //var sc = kv.GetSecretAsync("https://wickedvault.vault.azure.net/", "masterKey");
-            
 
-            AuthenticationCallback callback = async (authority,resource,scope) =>
+
+            AuthenticationCallback callback = async (authority, resource, scope) =>
             {
-                var appId = "5314007c-a783-4b92-b713-e928214947e9";
-                var appSecret = "0f76365a-7abc-40c5-b8f1-05e6964dae6c";
+                var appId = "7e739394-920b-42d8-9920-fe3922bb2219";
+                var appSecret = "e5d7f914-1143-4270-a660-8f5713db85f4";
 
                 System.Console.WriteLine($"Authority {authority}");
                 System.Console.WriteLine($"resource {resource}");
                 System.Console.WriteLine($"scope {scope}");
 
                 var authContext = new AuthenticationContext(authority);
-                
+
                 var credential = new ClientCredential(appId, appSecret);
                 var authResult = await authContext.AcquireTokenAsync(resource, credential);
                 return authResult.AccessToken;
             };
-            
-            System.Console.WriteLine($"Setting up client");
-            var client = new KeyVaultClient(callback);  
 
-client.HttpClient.BaseAddress = new Uri("https://wickedvault.vault.azure.net");
-        
-            var result = client.GetSecretAsync("https://wickedvault.vault.azure.net", "test");  
-            var r = client.GetKeyAsync("https://wickedvault.vault.azure.net", "masterKey"); 
+            System.Console.WriteLine($"Setting up client");
+            var client = new KeyVaultClient(callback);
+
+            client.HttpClient.BaseAddress = new Uri("https://sbkvpmtengine.vault.azure.net/");
+
+            var result = client.GetSecretAsync("https://wickedvault.vault.azure.net", "test");
+            var r = client.GetKeyAsync("https://wickedvault.vault.azure.net", "masterKey");
 
             Console.WriteLine($"  Val {result.Id}");
             Console.WriteLine(client.ApiVersion);
 
+            var decryptionResult = await client.DecryptAsync("masterKey", JsonWebKeyEncryptionAlgorithm.RSAOAEP, encryptedBytes);
 
-            
-            var decryptionResult = await client.DecryptAsync("masterKey",  JsonWebKeyEncryptionAlgorithm.RSAOAEP, encryptedBytes);
-
-             var decryptedText = Encoding.Unicode.GetString(decryptionResult.Result);
+            var decryptedText = Encoding.Unicode.GetString(decryptionResult.Result);
 
             return decryptedText;
 
-        }         
+        }
 
 
         private static HttpClient GetHttpClient()
@@ -97,7 +94,7 @@ client.HttpClient.BaseAddress = new Uri("https://wickedvault.vault.azure.net");
             var http = new HttpClient();
             //http.BaseAddress = new Uri("https://wickedvault.vault.azure.net");
             return http;
-        }       
+        }
 
         private static async Task<string> GetAccessTokenAsync(string authority, string resource, string scope)
         {
@@ -112,16 +109,17 @@ client.HttpClient.BaseAddress = new Uri("https://wickedvault.vault.azure.net");
         }
 
 
-        private static string Encrypt(Azure.Response<Key> key, string value) {
+        private static string Encrypt(Azure.Response<Key> key, string value)
+        {
 
             using (var rsa = new RSACryptoServiceProvider())
-            {          
+            {
                 var parameters = new RSAParameters()
                 {
                     Modulus = key.Value.KeyMaterial.N,
                     Exponent = key.Value.KeyMaterial.E
                 };
-            
+
                 rsa.ImportParameters(parameters);
                 var byteData = Encoding.Unicode.GetBytes(value);
                 var encryptedText = rsa.Encrypt(byteData, fOAEP: false);
@@ -131,8 +129,8 @@ client.HttpClient.BaseAddress = new Uri("https://wickedvault.vault.azure.net");
                 System.Console.WriteLine($"rsa encrypted text {encryptedText}");
                 System.Console.WriteLine($"encoded text {encodedText}");
 
-                return encodedText;            
-            }                   
+                return encodedText;
+            }
         }
 
         private static AzureServiceTokenProvider.TokenCallback GetKeyVaultCallback()
