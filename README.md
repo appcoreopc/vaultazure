@@ -8,6 +8,9 @@ Illustrate how to work with azure vault
 
 
 
+az ad sp create-for-rbac -n "wickedapp2" --skip-assignment
+  
+
 Resource 
 
 https://github.com/stephenhaunts/AzureKeyVault/blob/master/SimpleEncryptDecrypt/KeyVault.cs
