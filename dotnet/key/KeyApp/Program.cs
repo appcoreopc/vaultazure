@@ -40,8 +40,8 @@ namespace KeyApp
 
             AuthenticationCallback callback = async (authority, resource, scope) =>
             {
-                var appId = "dd91631d-77da-4720-aa95-e2f0f71ab135";
-                var appSecret = "6dccf41e-8134-416a-b806-4d160fa5084c";
+                var appId = "";
+                var appSecret = "";
                 //resource = "/subscriptions/0d2be596-245f-4f2e-8f16-abdc53bf0042/resourceGroups/rgkv/providers/Microsoft.KeyVault/vaults/wickedvault";
 
                 System.Console.WriteLine($"Authority {authority}");
@@ -70,8 +70,8 @@ namespace KeyApp
         {
             AuthenticationCallback callback = async (authority, resource, scope) =>
             {
-                var appId = "dd91631d-77da-4720-aa95-e2f0f71ab135";
-                var appSecret = "6dccf41e-8134-416a-b806-4d160fa5084c";
+                var appId = "";
+                var appSecret = "";
 
                 System.Console.WriteLine($"Authority {authority}");
                 System.Console.WriteLine($"resource {resource}");
