@@ -24,7 +24,7 @@ namespace KeyApp
             string value = "testing";
             var encodedText = Encrypt(value).GetAwaiter().GetResult();
 
-            Decrypt(encodedText).GetAwaiter().GetResult();
+            var result = Decrypt(encodedText).GetAwaiter().GetResult();
         }
 
         private static async Task<string> Decrypt(string encryptedText)
@@ -61,7 +61,7 @@ namespace KeyApp
             var decryptionResult = await client.DecryptAsync("https://wickedvault.vault.azure.net/keys/masterKey/4a43739e319941a889321e801d8534a4", JsonWebKeyEncryptionAlgorithm.RSAOAEP, encryptedBytes);
 
             var decryptedText = Encoding.Unicode.GetString(decryptionResult.Result);
-
+            Console.WriteLine($"decrypted : {decryptedText}");
             return decryptedText;
 
         }
@@ -100,7 +100,7 @@ namespace KeyApp
 
                 rsa.ImportParameters(parameters);
                 var byteData = Encoding.Unicode.GetBytes(value);
-                var encryptedText = rsa.Encrypt(byteData, fOAEP: false);
+                var encryptedText = rsa.Encrypt(byteData, fOAEP: true);
 
                 var encodedText = Convert.ToBase64String(encryptedText);
 
